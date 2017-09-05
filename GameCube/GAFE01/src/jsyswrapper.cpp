@@ -40,7 +40,7 @@ JC_JKRHeap_free(sysheap, handle) {
 	JKRHeap::free(void *);
 }
 
-JW_Init2(void) {
+void JW_Init2(void) {
 	heap = JC_JFWSystem_getSystemHeap();
 	JC_JKRExpHeap_changeGroupID(heap, 3);
 	ReportDiskID();
@@ -53,8 +53,23 @@ JW_Init2(void) {
 		if (handle == 0) {
 			OSDVDFatalError();
 		}
-		
 	}
+	heap = JC_JFWSystem_getSystemHeap();
+	freesize = JC_JKRHeap_getFreeSize(heap);
+	gameheap_len = freesize + 0xFFFF; // ??? addis     r0, r3, -1
+	heap = JC_JFWSystem_getSystemHeap();
+	JC_JKRHeap_alloc(heap, 0x20);
+	MallocInit(r3, gameheap_len); //need to fix
+	heap = JC_JFWSystem_getSystemHeap();
+	JC_JKRExpHeap_changeGroupID(heap, 4);
+}
+
+JC_JKRHeap_getFreeSize(void *heap) {
+	
+}
+
+JC_JKRHeap_alloc(void *heap) {
+	
 }
 
 ReportDiskID(void) {

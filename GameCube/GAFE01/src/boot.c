@@ -65,8 +65,68 @@ int __cdecl main(int argc, const char **argv, const char **envp) {
 	}
 	
 	
+	OSReport("システムパワーオン\n"); // System Power On
 	
+	
+	OSReport("リスタート\n"); // Restart
+	OSGetSaveRegion(); //TODO
+	OSReport("OSGetSaveRegion %08x %08x\n", , );
+	
+	
+	OSReport("ホットリセット\n"); //Hot Reset
+	code = OSGetResetCode();
+	OSReport("OSGetResetCode=0x%08x\n", code);
+	OSReport("リリース版ではリセットコードを無視します\n"); //Ignore Reset Code in Release Version
+	
+	
+	OSReport("デベロップメントモードに戻します。そしてリセット\x1B\x5B\x6D\n"); //Return to development mode. And reset
+	OSChangeBootMode(0);
+	OSResetSystem(1, dword_80206F9C, 0);
+	
+	OSReport("どうぶつの森ブートローダ起動\n"); //Animal Crossing Bootloader Start
+	
+	
+	JC_JUTException_setMapFile("/static.map");
+	
+	
+	
+	
+	
+	OSReport("InitialStartTime=%u us\n", dosomemath); //unfinished
+	sound_initial();
+	initial_menu_init();
+	dvderr_init();
+	sound_initial2();
+	
+	
+	
+	
+	
+	
+	if (rlwinm.   r0, r3, 0,3,3 | OSGetConsoleType()) {
+		OSReport("以降OSReportを無効\n"); //calling OSReportDisable
+		OSReportDisable();
+	}
+	OSReport("Loging COPYDATE\n");
+	handle = JC__JKRDvdToMainRam_byName("/COPYDATE", 0, 1);
+	if (handle == 0) {
+		OSDVDFatalError();
+	}
 	LoadStringTable("/static.str");
-	LoadLink("/foresta.rel.szs");
+	link = LoadLink("/foresta.rel.szs");
 	JW_Init2();
+	initial_menu_cleanup();
+	if (link == 0) { //try again ???
+		link = LoadLink("/foresta.rel.szs");
+	}
+	heap = JC_JFWSystem_getSystemHeap();
+	JC_JKRExpHeap_changeGroupID(heap, 5);
+	if (0x90(r30) != 0) { // 800065DC
+		OSReport("ホットスタート(%08x)", 0x90(r30));
+	}
+	UnLink(link);
+	
+	OSReport("どうぶつの森ブートローダ終了\n"); //Animal Crossing Bootloader End
+	JW_Cleanup();
+	return 0;
 }
