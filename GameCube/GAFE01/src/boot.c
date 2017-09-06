@@ -15,18 +15,18 @@ uint32_t convert_partial_address(uint32_t address) { //unfinished
 		return address;
 	}
 	asm("
-		lwz       r3, 0xC(r1)
-		lwz       r0, 8(r1)
-		slwi      r3, r3, 28
-		clrlwi    r0, r0, 7
-		add       r3, r3, r0
+		lwz	   r3, 0xC(r1)
+		lwz	   r0, 8(r1)
+		slwi	  r3, r3, 28
+		clrlwi	r0, r0, 7
+		add	   r3, r3, r0
 	");
 	//restore stack frame, return
 	
 }
 
 void LoadStringTable(const char name) {
-    OSReport(﻿"ストリングテーブル読み込み開始\n"); //Start Reading String Table
+	OSReport(﻿"ストリングテーブル読み込み開始\n"); //Start Reading String Table
 	uint64_t time = osGetTime(); // ???
 	uint32_t table = JC__JKRDvdToMainRam_byName(name, 0, 1);
 	if (table == 0) {
@@ -35,7 +35,7 @@ void LoadStringTable(const char name) {
 	*StringTable = table;
 	OSSetStringTable(&StringTable);
 	uint64_t time = osGetTime(); // ???
-    OSReport("ストリングテーブル読み込み 完了\n"); //String Table Loading Complete
+	OSReport("ストリングテーブル読み込み 完了\n"); //String Table Loading Complete
 }
 
 void UnLink(uint32_t link) {
@@ -57,12 +57,12 @@ void UnLink(uint32_t link) {
 
 LoadLink() { //unfinished
 	OSReport("モジュール(%s)の読み込み中\n");
-    OSReport("モジュール(%s)の読み込みに失敗しました\n");
-    OSReport("モジュール(%s)の読み込み完了\n");
-    OSReport("module=%08x\n");
-    OSReport("result=%08x\n");
-    OSReport("length=%08x\n");
-    OSReport("サウンドアリーナ %08x 使用 bss=%08x\n");
+	OSReport("モジュール(%s)の読み込みに失敗しました\n");
+	OSReport("モジュール(%s)の読み込み完了\n");
+	OSReport("module=%08x\n");
+	OSReport("result=%08x\n");
+	OSReport("length=%08x\n");
+	OSReport("サウンドアリーナ %08x 使用 bss=%08x\n");
 }
 
 void audioFatalCallback(void) {
@@ -72,9 +72,9 @@ void audioFatalCallback(void) {
 
 void sound_initial(void) {
 	Na_InitAudio(*audioFatalCallback, 0, 0, *nintendo_hi_0, 0x66A0, 0);
-    OSReport("sizeof(nintendo_hi_0)=%08x\n", 0x9900); //sizeof(nintendo_hi_0)=00009900
-    OSReport("実際のnintendo_hi_0.awのサイズ=%08x \n", 0x66A0); //Actual size of nintendo_hi_0.aw = 000066A0
-    OSReport("ニンテンドー発生タイムラグまで寝てます(%dms)\x1B[m\n", 0x9C4);
+	OSReport("sizeof(nintendo_hi_0)=%08x\n", 0x9900); //sizeof(nintendo_hi_0)=00009900
+	OSReport("実際のnintendo_hi_0.awのサイズ=%08x \n", 0x66A0); //Actual size of nintendo_hi_0.aw = 000066A0
+	OSReport("ニンテンドー発生タイムラグまで寝てます(%dms)\x1B[m\n", 0x9C4);
 	msleep(0x9C4);
 }
 
@@ -109,8 +109,8 @@ void fault_callback_Setumei(void) {
 		"A BUTTON : BOTTOM OF CONSOLE");
 }
 void fault_callback_vimode() { //unfinished
-    OSReport("貸し出しバージョンなのでコードは出しません\n");
-    OSReport("B+X+STARTでリスタートします\n");
+	OSReport("貸し出しバージョンなのでコードは出しません\n");
+	OSReport("B+X+STARTでリスタートします\n");
 	JW_SetFamicomMode(0);
 	JW_SetLowResoMode(0);
 }
@@ -119,13 +119,13 @@ void fault_callback_scroll() { //unfinished
 }
 adjustOSArena() { //unfinished
 	OSReport("ARENA %08x-%08x\x1B[m\n");
-    OSReport("搭載メモリが 24MB を超えていますが、24MB に限定します。\x1B[m\n");
-    OSReport("搭載メモリが 32MB を超えていますが、32MB に限定します。\x1B[m\n");
-    OSReport("搭載メモリが 32MB を超えています。\x1B[m\n");
-    OSReport("搭載メモリが 24MB 以下なので動かない事がありえます。\x1B[m\n");
+	OSReport("搭載メモリが 24MB を超えていますが、24MB に限定します。\x1B[m\n");
+	OSReport("搭載メモリが 32MB を超えていますが、32MB に限定します。\x1B[m\n");
+	OSReport("搭載メモリが 32MB を超えています。\x1B[m\n");
+	OSReport("搭載メモリが 24MB 以下なので動かない事がありえます。\x1B[m\n");
 }
 
-//    OSReport("L+R+X+Y+Down, START BUTTON");
+//	OSReport("L+R+X+Y+Down, START BUTTON");
 
 main() { //unfinished
 	ReconfigBATS();
@@ -133,9 +133,9 @@ main() { //unfinished
 		return -1;
 	}
 	fakemain_check = 1;
-    OSReport("NDEBUG defined.\x1B[m\n");
-    OSReport("_DEBUG not defined.\x1B[m\n");
-    OSReport("DEBUG=%d\x1B[m\n", 0);
+	OSReport("NDEBUG defined.\x1B[m\n");
+	OSReport("_DEBUG not defined.\x1B[m\n");
+	OSReport("DEBUG=%d\x1B[m\n", 0);
 	uint64_t time = osGetTime(); // 800E2288
 	OSInit();
 	OSInitAlarm();
@@ -158,24 +158,24 @@ main() { //unfinished
 	
 	
 	
-    OSReport("リリース版ではリセットコードを無視します\n");
+	OSReport("リリース版ではリセットコードを無視します\n");
 	OSChangeBootMode(0);
 	OSResetSystem(1, &80206F9C, 0);
 	DVDGetCurrentDiskID();
-    OSReport("デベロップメントモードに戻します。そしてリセット\x1B[m\n");
-    OSReport("ZURUMODE2 ENABLE\n");
-    OSReport("osAppNMIBuffer[15]=0x%08x\n");
-    OSReport("異常状態でのリセット検出ゆえリセットさん免除フラグをセットしました\x1B[m\n");
+	OSReport("デベロップメントモードに戻します。そしてリセット\x1B[m\n");
+	OSReport("ZURUMODE2 ENABLE\n");
+	OSReport("osAppNMIBuffer[15]=0x%08x\n");
+	OSReport("異常状態でのリセット検出ゆえリセットさん免除フラグをセットしました\x1B[m\n");
 	
 	
 	
 	
-    OSReport("どうぶつの森ブートローダ起動\n");
+	OSReport("どうぶつの森ブートローダ起動\n");
 	adjustOSArena();
 	JW_init();
 	
 	
-    JC_JUTException_setMapFile("/static.map");
+	JC_JUTException_setMapFile("/static.map");
 	JC_JUTException_enterAllPad(JC_JUTException_getManager());
 	fault_Init();
 	fault_AddClientEx(StringTable + 0x10, fault_callback_vimode, 0, 0, 0xA, 0xE);
@@ -187,7 +187,7 @@ main() { //unfinished
 	
 	//math here
 	
-    OSReport("InitialStartTime=%u us\n");
+	OSReport("InitialStartTime=%u us\n");
 	sound_initial();
 	initial_menu_init();
 	dvderr_init();
@@ -196,13 +196,13 @@ main() { //unfinished
 		OSReport("以降OSReportを無効\n");
 		OSReportDisable();
 	}
-    OSReport("Loging COPYDATE\n");
-    uint32_t handle = JC__JKRDvdToMainRam_byName("/COPYDATE", 0, 1);
+	OSReport("Loging COPYDATE\n");
+	uint32_t handle = JC__JKRDvdToMainRam_byName("/COPYDATE", 0, 1);
 	if (handle == 0) {
 		OSDVDFatalError();
 	}
-    LoadStringTable("/static.str");
-    uint32_t link = LoadLink("/foresta.rel.szs");
+	LoadStringTable("/static.str");
+	uint32_t link = LoadLink("/foresta.rel.szs");
 	JW_Init2();
 	initial_menu_cleanup();
 	if (link == 0) {
@@ -220,7 +220,7 @@ main() { //unfinished
 		JW_Free();
 		&r30 = 0; //some var
 	}
-    OSReport("どうぶつの森ブートローダ終了\n");
+	OSReport("どうぶつの森ブートローダ終了\n");
 	JW_Cleanup();
 	return 0;
 }
