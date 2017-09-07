@@ -53,16 +53,26 @@ void UnLink(uint32_t link) {
 	JW_Free(link);
 }
 
-
-
-LoadLink() { //unfinished
-	OSReport("モジュール(%s)の読み込み中\n");
-	OSReport("モジュール(%s)の読み込みに失敗しました\n");
-	OSReport("モジュール(%s)の読み込み完了\n");
-	OSReport("module=%08x\n");
-	OSReport("result=%08x\n");
-	OSReport("length=%08x\n");
+LoadLink(const char name) { //unfinished
+	OSReport("モジュール(%s)の読み込み中\n", name); //Loading Module (/foresta.rel.szs)
+	uint32_t handle = JC__JKRDvdToMainRam_byName(name, 0, 1);
+	if (handle == 0) { //couldn't load file
+		OSReport("モジュール(%s)の読み込みに失敗しました\n");
+		OSDVDFatalError();
+	} else {
+		OSReport("モジュール(%s)の読み込み完了\n");
+		OSReport("module=%08x\n");
+		OSReport("result=%08x\n");
+		size = JW_GetMemBlockSize(handle);
+		OSReport("length=%08x\n", size);
+		JC__JKRDetachResource(handle);
+	}
 	OSReport("サウンドアリーナ %08x 使用 bss=%08x\n");
+	
+	
+	
+	return OSLink(handle, smth); // we want this to happen
+	goto handle[0x34]; //mtctr, bctrl
 }
 
 void audioFatalCallback(void) {
