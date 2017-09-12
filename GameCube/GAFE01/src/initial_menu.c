@@ -31,7 +31,19 @@ void step0_make_dl(stack) { //might just be void
 make_dl_nintendo_logo
 step1_make_dl
 step2_make_dl
-make_dl
+void make_dl() {
+	step0_make_dl();
+	if (menu_step == 1) {
+		step1_make_dl();
+	}
+	else if (menu_step != 11) {
+		if (menu_step != 2) {
+			step2_make_dl();
+		}
+	}
+	// some pointer stuff
+}
+
 exec_dl
 keycheck
 proc
