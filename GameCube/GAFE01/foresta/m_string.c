@@ -6,22 +6,32 @@ void mString_aram_init(void) { //finished, pretty simple
 mString_Get_StringDataAddressAndSize(index, address, size) {
 	return mMsg_Get_BodyParam(&String_table_rom_start, &String_rom_start, index, address, size);
 }
-void mString_Load_StringFromRom(r3, r4, r5 index) { //finished, kinda sorta
-	mString_Get_StringDataAddressAndSize(index, &address, &size); //needs to be allocated, uses stack
-	if (size == 0) {
-		return mem_clear(r3, r4, 0x20); //no string
-	}
-	if (address != 0) { //does translation, aram to main ram (offset in mem)
-		_JW_GetResourceAram(aram_addr, buff$408, (size + 0x1F) & 0xFFFFFFE0); //size=r5
+void mString_Load_StringFromRom(const char* alloc, uint32_t alloc_size, int index) { //finished
+	if (0x7FF >= index >= 0) {
+		uint32_t address = 0, size = 0; //prob invalid but w/e not compiling rn
+		mString_Get_StringDataAddressAndSize(index, &address, &size);
 		if (size != 0) {
-			for (int i = 0;i < size;i++) {
-				r3[i] = buff$408[i]
+			if (address != 0) { //does translation, aram to main ram (offset in mem)
+				var = ((size + 0x1F) + (address - (address & 0xFFFFFFE0))) & 0xFFFFFFE0; //not actually here
+				_JW_GetResourceAram(address, buff$408, var); //address = aram_addr, size = ???
+				if (addr_size < size) {
+					size = addr_size;
+				}
+				 //time to copy string
+				if (size > 0) { //copy it to output
+					for (int i = 0;i < size;i++) {
+						alloc[i] = buff$408[i]
+					}
+				}
+				for (int j = size; j < i;j++) {
+					alloc[i] = 0x20; // " ", space it out to full
+				}
 			}
-			for (int j = size; j < i;j++) {
-				r3[i] = 0x20; // " ", space it out to full
-			}
+		} else {
+			mem_clear(alloc, alloc_size, 0x20); //no string, " "
 		}
 	}
+	//doesn't return a value
 }
 mString_Load_YearStringFromRom
 mString_Load_MonthStringFromRom
