@@ -56,8 +56,9 @@ JKRAramArchive::getAramAddress_Entry(JKRArchive::SDIFileEntry *) {
 	
 }
 
-JKRAramArchive::getAramAddress(unsigned long, char const *) {
-	
+uint32_t JKRAramArchive::getAramAddress(unsigned long resourceType, const char *name) { //CPP Object is r3
+	resource = JKRArchive::findTypeResource(resourceType, name);
+	return JKRAramArchive::getAramAddress_Entry(resource);
 }
 
 JKRAramArchive::fetchResource_subroutine(unsigned long, unsigned long, unsigned char *, unsigned long, int) {
