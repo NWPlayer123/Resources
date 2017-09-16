@@ -17,7 +17,7 @@ void mString_Load_StringFromRom(const char* alloc, uint32_t alloc_size, int inde
 				if (addr_size < size) {
 					size = addr_size;
 				}
-				 //time to copy string
+				//time to copy string
 				if (size > 0) { //copy it to output
 					for (int i = 0;i < size;i++) {
 						alloc[i] = buff$408[i]
@@ -33,8 +33,20 @@ void mString_Load_StringFromRom(const char* alloc, uint32_t alloc_size, int inde
 	}
 	//doesn't return a value
 }
-mString_Load_YearStringFromRom
-mString_Load_MonthStringFromRom
+
+void mString_Load_YearStringFromRom(const char *alloc, uint32_t year) {
+	if (year > 2099 || 1901 > year)
+		year = 2000;
+	mFont_UnintToString(alloc, 6, year & 0xFFFF, 6, 1, 0, 0);
+	//alloc is assumed to have string, no return
+}
+
+uint32_t mString_Load_MonthStringFromRom(const char *alloc, int month) {
+	if (month > 12 || month < 1)
+		month = 1;
+	mString_Load_StringFromRom(alloc, 9, (month & 0xFF) + 0x66C); //September = 9 chars
+	return mMsg_Get_Length_String(alloc, 9);
+}
 mString_Load_WeekStringFromRom
 mString_Load_DayStringFromRom
 mString_Load_HourStringFromRom
