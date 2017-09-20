@@ -1,0 +1,12 @@
+mPM_move_Move
+mPM_move_Obey
+mPM_move_End
+mPM_passwordMake_ovl_move
+mPM_set_frame_dl
+mPM_set_character
+mPM_set_dl
+mPM_passwordMake_ovl_draw
+mPM_passwordMake_ovl_set_proc
+mPM_passwordMake_ovl_init
+mPM_passwordMake_ovl_construct
+mPM_passwordMake_ovl_destruct

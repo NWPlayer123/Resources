@@ -1,0 +1,12 @@
+mPC_move_Move
+mPC_move_Obey
+mPC_move_End
+mPC_passwordChk_ovl_move
+mPC_set_frame_dl
+mPC_set_character
+mPC_set_dl
+mPC_passwordChk_ovl_draw
+mPC_passwordChk_ovl_set_proc
+mPC_passwordChk_ovl_init
+mPC_passwordChk_ovl_construct
+mPC_passwordChk_ovl_destruct
