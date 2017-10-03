@@ -1,0 +1,28 @@
+void __CARDDefaultApiCallback(*callback) {
+	return; //stubbed
+}
+
+__CARDSyncCallback
+__CARDExtHandler
+__CARDExiHandler
+__CARDTxHandler
+__CARDUnlockedHandler
+__CARDEnableInterrupt
+__CARDReadStatus
+__CARDClearStatus
+TimeoutHandler
+Retry
+UnlockedCallback
+__CARDStart
+__CARDReadSegment
+__CARDWritePage
+__CARDEraseSector
+CARDInit
+__CARDSetDiskID
+__CARDGetControlBlock
+__CARDPutControlBlock
+CARDGetResultCode
+CARDFreeBlocks
+CARDGetSectorSize
+__CARDSync
+OnReset
