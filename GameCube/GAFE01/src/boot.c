@@ -1,236 +1,125 @@
-uint32_t soundArenaAlloc(void) {
-	return 0; //stubbed ??
-}
-
-int search_partial_address(uint32_t address) {
-	if (address == 0) {
-		return -1;
-	}
-	//unfinished, irritating
-}
-
-uint32_t convert_partial_address(uint32_t address) { //unfinished
-	ret = search_partial_address(address, <stack r4 r5 r6>);
-	if (ret != 0) {
-		return address;
-	}
-	asm("
-		lwz	   r3, 0xC(r1)
-		lwz	   r0, 8(r1)
-		slwi	  r3, r3, 28
-		clrlwi	r0, r0, 7
-		add	   r3, r3, r0
-	");
-	//restore stack frame, return
-	
-}
-
-void LoadStringTable(const char name) {
-	OSReport(﻿"ストリングテーブル読み込み開始\n"); //Start Reading String Table
-	uint64_t time = osGetTime(); // ???
-	uint32_t table = JC__JKRDvdToMainRam_byName(name, 0, 1);
-	if (table == 0) {
-		OSDVDFatalError();
-	}
-	*StringTable = table;
-	OSSetStringTable(&StringTable);
-	uint64_t time = osGetTime(); // ???
-	OSReport("ストリングテーブル読み込み 完了\n"); //String Table Loading Complete
-}
-
-void UnLink(uint32_t link) {
-	if (link != 0) {
-		value = link[0x38];
-		if (value != 0) {
-			OSReport("エピローグ開始\n"); //Epilogue Start
-			goto value; //mtctr, bctrl
-			OSReport("エピローグ完了\n"); //Epilogue Complete
+soundArenaAlloc
+search_partial_address
+convert_partial_address
+LoadStringTable
+UnLink
+LoadLink
+audioFatalCallback
+sound_initial
+sound_initial2
+HotResetIplMenu
+fault_callback_keyCheck
+fault_callback_OK
+fault_callback_Setumei
+fault_callback_vimode
+fault_callback_scroll
+adjustOSArena
+int main(int argc, const char **argv) { //mostly finished :D
+	ReconfigBATs();
+	if (fakemain_check == 0) {
+		//some dumb debug print, NDEBUG defined, _DEBUG not defined, DEBUG=0
+		InitialStartTime = osGetTime(); //uint64_t
+		OSInit();
+		OSInitAlarm();
+		if (OSGetStackPointer() - 0x100 <= OSGetCurrentThread()[0x304 / 4]) { //should be right math???
+			if (OSGetStackPointer() - 0x100 >= OSGetCurrentThread()[0x308 / 4] + 4) { //messy, fix this when you get thread shit in
+				memset(OSGetCurrentThread()[0x308 / 4] + 4, 0xFD, (OSGetStackPointer() - 0x100) - (OSGetCurrentThread()[0x308 / 4] + 4));
+			}
 		}
-		OSReport("アンリンク中\n"); //Unlink Start
-		OSUnlink(link);
-		OSReport("アンリンク完了\n"); //Unlink Complete
+		bzero(osAppNMIBuffer, 0x40); //zero out
+		if (OSGetResetCode() == 0) {
+			OSReport("System Power On\n");
+		} else if (OSGetResetCode() > 0x80000001) {
+			OSReport("Restart\n"); //Resetti's gonna be angery
+			uint32_t start, end;
+			OSGetSaveRegion(start, end);
+			OSReport("OSGetSaveRegion %08x %08x\n", start, end);
+			bcopy(0x811FFFC0, osAppNMIBuffer, 0x40); //bcopy osAppNMIBuffer to 0x811FFFC0
+		} else {
+			OSReport("Hot Reset\n"); //not sure that's the right term but okie
+			OSReport("OSGetResetCode=0x%08x\n", OSGetResetCode());
+			OSReport("Ignore the reset code in release version\n"); //well you left this comment so ¯\_(ツ)_/¯
+		}
+		__osInitialize_common();
+		if (OSGetConsoleType() & 0x10000000 != 0) {
+			osAppNMIBuffer[15] |= 0x10;
+		} else if (osAppNMIBuffer[15] & 0x10 != 0) {
+			OSReport("Resetting and returning to development mode\n");
+			OSChangeBootMode(0);
+			OSResetSystem(1, osAppNMIBuffer[15], 0);
+		}
+		//normally uses DVDGetCurrentDiskID for the +7 but fuck dat
+		if ((uint8_t)*0x80000007 == 0x99) { //Version ID
+			OSReport("ZURUMODE2 ENABLE\n");
+			osAppNMIBuffer[15] |= 0x68; //combining several checks
+		}
+		OSReport("osAppNMIBuffer[15]=0x%08x\n", osAppNMIBuffer[15]);
+		if (osAppNMIBuffer[15] & 4 != 0) {
+			osAppNMIBuffer[15] &= 0xE;
+			osAppNMIBuffer[15] |= 0x2;
+			OSReport("Set an exception flag that was reset due to resetting an irregular status.\n");
+		} else {
+			osAppNMIBuffer[15] &= 7;
+		}
+		osAppNMIBuffer[15] |= 4;
+		OSReport("Animal Crossing Bootloader Start\n");
+		adjustOSArena();
+		JW_Init();
+		if (osAppNMIBuffer[15] & 0x20 != 0) {
+			JC_JUTProcBar_setVisible(JC_JUTProcBar_getManager(), (osAppNMIBuffer[15] >> 6) & 1);
+			JC_JUTProcBar_setVisibleHeapBar(JC_JUTProcBar_getManager(), (osAppNMIBuffer[15] >> 6) & 1);
+		}
+		JC_JUTException_setMapFile("/static.map");
+		JC_JUTException_enterAllPad(JC_JUTException_getManager());
+		fault_AddClientEx(my_fault_client5, fault_callback_vimode, 0, 0, 10, 14);
+		fault_AddClientEx(my_fault_client1, fault_callback_keyCheck, tbl, tbl[1] << 8 | tbl[2], 10, 14); //load uint16s
+		fault_AddClientEx(my_fault_client2, fault_callback_OK, 0, 0, 10, 14);
+		fault_AddClientEx(my_fault_client3, fault_callback_Setumei, 0, 0, 10, 9);
+		fault_AddClientEx(my_fault_client6, fault_callback_scroll, 0, 0, 1, 9);
+		fault_AddClient(my_fault_client4, DisplayArena, 0, 0); //0, 1);
+		if (osAppNMIBuffer[15] & 0x40 != 0) {
+			JC_JUTAssertion_changeDevice(3);
+			JC_JUTDbPrint_setVisible(JC_JUTDbPrint_getManager(), 1);
+		} else {
+			JC_JUTAssertion_changeDevice(2);
+			JC_JUTDbPrint_setVisible(JC_JUTDbPrint_getManager(), 0);
+		}
+		JC_JUTAssertion_changeDisplayTime(600);
+		//OSReport("InitialStartTime=%u us\n", __div2u(somemathIdontwannado));
+		sound_initial();
+		initial_menu_init();
+		dvderr_init();
+		sound_initial2();
+		if (OSGetConsoleType() & 0x10000000 == 0) {
+			OSReport("Disabling OSReport\n");
+			OSReportDisable();
+		}
+		OSReport("Logging COPYDATE\n");
+		boot_copyDate = JC__JKRDvdToMainRam_byName("/COPYDATE", 0, 1);
+		if (boot_copyDate == 0) {
+			OSDVDFatalError();
+		}
+		LoadStringTable("/static.str");
+		moduleA = LoadLink("/foresta.rel.szs");
+		JW_Init2();
+		initial_menu_cleanup();
+		if (moduleA == 0) {
+			moduleA = LoadLink("/foresta.rel.szs");
+		}
+		JC_JKRExpHeap_changeGroupID(JC_JFWSystem_getSystemHeap(), 5);
+		while (HotStartEntry != 0) { //main loop
+			OSReport("Entry Point: %08x\n");
+			HotStartEntry = HotStartEntry(); //call and store ret
+		}
+		UnLink(moduleA);
+		moduleA = 0;
+		if (StringTable != 0) {
+			JW_Free(StringTable);
+			StringTable = 0;
+		}
+		OSReport("Animal Crossing Bootloader End\n");
+		JW_Cleanup();
+		return 0;
 	}
-	JW_Free(link);
-}
-
-LoadLink(const char name) { //unfinished
-	OSReport("モジュール(%s)の読み込み中\n", name); //Loading Module (/foresta.rel.szs)
-	uint32_t handle = JC__JKRDvdToMainRam_byName(name, 0, 1);
-	if (handle == 0) { //couldn't load file
-		OSReport("モジュール(%s)の読み込みに失敗しました\n");
-		OSDVDFatalError();
-	} else {
-		OSReport("モジュール(%s)の読み込み完了\n");
-		OSReport("module=%08x\n");
-		OSReport("result=%08x\n");
-		size = JW_GetMemBlockSize(handle);
-		OSReport("length=%08x\n", size);
-		JC__JKRDetachResource(handle);
-	}
-	OSReport("サウンドアリーナ %08x 使用 bss=%08x\n");
-	
-	
-	
-	return OSLink(handle, smth); // we want this to happen
-	goto handle[0x34]; //mtctr, bctrl
-}
-
-void audioFatalCallback(void) {
-	OSReport("audioFatalCallback\x1B[m\n");
-	OSDVDFatalError();
-}
-
-void sound_initial(void) {
-	Na_InitAudio(*audioFatalCallback, 0, 0, *nintendo_hi_0, 0x66A0, 0);
-	OSReport("sizeof(nintendo_hi_0)=%08x\n", 0x9900); //sizeof(nintendo_hi_0)=00009900
-	OSReport("実際のnintendo_hi_0.awのサイズ=%08x \n", 0x66A0); //Actual size of nintendo_hi_0.aw = 000066A0
-	OSReport("ニンテンドー発生タイムラグまで寝てます(%dms)\x1B[m\n", 0x9C4);
-	msleep(0x9C4);
-}
-
-void sound_initial2(void) {
-	while (Na_CheckNeosBoot() & 0xFF == 0) {
-		VIWaitForRetrace();
-		Na_GameFrame();
-	}
-	bzero(nintendo_hi_0, 0x9900);
-}
-
-void HotResetIplMenu(void) {
-	if (80206F9C & 0x10)
-		OSChangeBootMode(1);
-	OSResetSystem(1, &80206F9C, 1);
-}
-
-fault_callback_keyCheck() { //unfinished
-	fault_Printf("PUSH %s\n");
-}
-
-void fault_callback_OK(void) {
-	fault_Printf("\nOK! YOU ARE GREAT!\n");
-	fault_WaitTime(0x7D0);
-}
-
-void fault_callback_Setumei(void) {
-	fault_Printf(
-		""
-		"+ KEY to SCROLL UP/DOWN"
-		"B BUTTON : TOP OF CONSOLE"
-		"A BUTTON : BOTTOM OF CONSOLE");
-}
-void fault_callback_vimode() { //unfinished
-	OSReport("貸し出しバージョンなのでコードは出しません\n");
-	OSReport("B+X+STARTでリスタートします\n");
-	JW_SetFamicomMode(0);
-	JW_SetLowResoMode(0);
-}
-void fault_callback_scroll() { //unfinished
-	
-}
-adjustOSArena() { //unfinished
-	OSReport("ARENA %08x-%08x\x1B[m\n");
-	OSReport("搭載メモリが 24MB を超えていますが、24MB に限定します。\x1B[m\n");
-	OSReport("搭載メモリが 32MB を超えていますが、32MB に限定します。\x1B[m\n");
-	OSReport("搭載メモリが 32MB を超えています。\x1B[m\n");
-	OSReport("搭載メモリが 24MB 以下なので動かない事がありえます。\x1B[m\n");
-}
-
-//	OSReport("L+R+X+Y+Down, START BUTTON");
-
-main() { //unfinished
-	ReconfigBATS();
-	if (fakemain_check != 0) {
-		return -1;
-	}
-	fakemain_check = 1;
-	OSReport("NDEBUG defined.\x1B[m\n");
-	OSReport("_DEBUG not defined.\x1B[m\n");
-	OSReport("DEBUG=%d\x1B[m\n", 0);
-	uint64_t time = osGetTime(); // 800E2288
-	OSInit();
-	OSInitAlarm();
-	OSGetStackPointer();
-	
-	bzero(osAppNMIBuffer, 0x40);
-	int code = OSGetResetCode(); //can be negative
-	if (code == 0) {
-		OSReport("システムパワーオン\n");
-	} else if (code > 0 || code > 0x80000001) {
-		OSReport("ホットリセット\n");
-		OSReport("OSGetResetCode=0x%08x\n", OSGetResetCode());
-	} else {
-		OSReport("リスタート\n");
-		OSGetSaveRegion(); //unfinished, gets stack vars something
-		OSReport("OSGetSaveRegion %08x %08x\n");
-		bcopy(0x811FFFC0, osAppNMIBuffer, 0x40);
-	}
-	
-	
-	
-	
-	OSReport("リリース版ではリセットコードを無視します\n");
-	OSChangeBootMode(0);
-	OSResetSystem(1, &80206F9C, 0);
-	DVDGetCurrentDiskID();
-	OSReport("デベロップメントモードに戻します。そしてリセット\x1B[m\n");
-	OSReport("ZURUMODE2 ENABLE\n");
-	OSReport("osAppNMIBuffer[15]=0x%08x\n");
-	OSReport("異常状態でのリセット検出ゆえリセットさん免除フラグをセットしました\x1B[m\n");
-	
-	
-	
-	
-	OSReport("どうぶつの森ブートローダ起動\n");
-	adjustOSArena();
-	JW_init();
-	
-	
-	JC_JUTException_setMapFile("/static.map");
-	JC_JUTException_enterAllPad(JC_JUTException_getManager());
-	fault_Init();
-	fault_AddClientEx(StringTable + 0x10, fault_callback_vimode, 0, 0, 0xA, 0xE);
-	fault_AddClientEx(StringTable + 0x24, fault_callback_keyCheck, &tbl_544, &800A97E4, 0xA, 0xE);
-	fault_AddClientEx(StringTable + 0x38, fault_callback_OK, 0, 0, 0xA, 0xE);
-	fault_AddClientEx(StringTable + 0x4C, fault_callback_Setumei, 0, 0, 0xA, 9);
-	fault_AddClientEx(StringTable + 0x60, fault_callback_scroll, 0, 0, 1, 9);
-	fault_AddClient(StringTable + 0x74, DisplayArena, 0, 0);
-	
-	//math here
-	
-	OSReport("InitialStartTime=%u us\n");
-	sound_initial();
-	initial_menu_init();
-	dvderr_init();
-	sound_initial2();
-	if(!(OSGetConsoleType() & 0x10000000)) { //Retail Mode
-		OSReport("以降OSReportを無効\n");
-		OSReportDisable();
-	}
-	OSReport("Loging COPYDATE\n");
-	uint32_t handle = JC__JKRDvdToMainRam_byName("/COPYDATE", 0, 1);
-	if (handle == 0) {
-		OSDVDFatalError();
-	}
-	LoadStringTable("/static.str");
-	uint32_t link = LoadLink("/foresta.rel.szs");
-	JW_Init2();
-	initial_menu_cleanup();
-	if (link == 0) {
-		LoadLink("/foresta.rel.szs"); //try again ??
-	}
-	uint32_t heap = JC_JFWSystem_getSystemHeap();
-	JC_JKRExpHeap_changeGroupID(heap, 5);
-	while (0x90(r30) == 0) { //callback loop ???
-		OSReport("ホットスタート(%08x)\n", 0x90(r30));
-		goto 0x90(r30); //mtctr, bctrl, callback something
-	}
-	Unlink(link);
-	link = 0;
-	if (&r30 != 0) {
-		JW_Free();
-		&r30 = 0; //some var
-	}
-	OSReport("どうぶつの森ブートローダ終了\n");
-	JW_Cleanup();
-	return 0;
+	return -1;
 }
