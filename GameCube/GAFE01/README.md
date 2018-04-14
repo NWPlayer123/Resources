@@ -1,6 +1,18 @@
 # Intro
 This here is an attempt to translate Animal Crossing for GameCube back to source code, since it has full symbols.
 
+# Bootloader
+This is what loads the Nintendo logo (nintendo_376x104) and sound byte (nintendo_hi_0):
+```
+sound_initial();
+initial_menu_init();
+dvderr_init();
+sound_initial2();
+```
+While those are playing, it'll load, decompress, and run _prolog for foresta.rel, which are all done in LoadLink (chainloads OSLink, the SDK function that loads the REL into memory).
+
+After that, it'll call HotStartEntry(), which _prolog sets to foresta's entry(), which boots the actual title screen and game.
+
 # Notes
 File loading seems to happen in several ways, actual archive handling is done in main.dol/static.map, JKernel's ARAM (Archive RAM?), the foresta.rel just requests to load files and get data from them, which is all done in memory (hence ARAM).
 
