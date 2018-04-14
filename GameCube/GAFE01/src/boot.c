@@ -3,17 +3,63 @@ search_partial_address
 convert_partial_address
 LoadStringTable
 UnLink
-LoadLink
+uint32_t LoadLink(const char *name) {
+	OSReport("Loading module %s\n", name);
+	uint32_t handle = JC__JKRDvdToMainRam_byName(name, 0, 1);
+	if (handle == 0) {
+		OSReport("Failed to load module %s\n", name);
+		OSDVDFatalError();
+		return handle; //unnecessary but w/e
+	}
+	OSReport("Done reading module %s\n", name);
+	OSReport("module=%08x\n", handle);
+	OSReport("result=%08x\n", handle == 0 ? 0 : 1); //if null, equals false else true
+	OSReport("length=%08x\n", JW_GetMemBlockSize(handle));
+	JC__JKRDetachResource(handle);
+	//come back to this, unfinished
+}
 audioFatalCallback
-sound_initial
-sound_initial2
-HotResetIplMenu
+void sound_initial(void) {
+	Na_InitAudio(audioFatalCallback, 0, 0, nintendo_hi_0, 0x66A0, 0);
+	OSReport("sizeof(nintendo_hi_0)=%08x\n", 0x9900); //¯\_(ツ)_/¯
+	OSReport("actual size of nintendo_hi_0=%08x\n", 0x66A0);
+	OSReport("Sleeping %dms for nintendo_hi_0 start\n", 2500);
+	msleep(2500); //"time lag" until actual sound starts
+}
+
+void sound_initial2(void) {
+	while (Na_CheckNeosBoot & 0xFF == 0) {
+		VIWaitForRetrace();
+		Na_GameFrame();
+	}
+	bzero(nintendo_hi_0, 0x9900);
+}
+
+void HotResetIplMenu(void) {
+	if (osAppNMIBuffer[15] & 0x10 != 0) {
+		OSChangeBootMode(1);
+	}
+	OSResetSystem(1, osAppNMIBuffer[15], 1);
+}
+
 fault_callback_keyCheck
-fault_callback_OK
-fault_callback_Setumei
+
+void fault_callback_OK(void) {
+	fault_Printf("\nOK! YOU ARE GREAT!\n");
+	fault_WaitTime(2000);
+}
+
+fault_callback_Setumei(void) {
+	fault_Printf("\n"
+				 "+ KEY to SCROLL UP/DOWN\n"
+				 "B BUTTON : TOP OF CONSOLE\n"
+				 "A BUTTON : BOTTOM OF CONSOLE\n");
+}
+
 fault_callback_vimode
 fault_callback_scroll
 adjustOSArena
+
 int main(int argc, const char **argv) { //mostly finished :D
 	ReconfigBATs();
 	if (fakemain_check == 0) {
