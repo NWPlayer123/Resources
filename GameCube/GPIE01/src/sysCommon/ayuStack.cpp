@@ -1,0 +1,10 @@
+__ct__8AyuCacheFUl
+cacheFree__8AyuCacheFPv
+init__7AyuHeapFPciPvi
+init__8AyuCacheFUlUl
+isEmpty__8AyuCacheFv
+largestBlockFree__8AyuCacheFv
+mallocL__8AyuCacheFUl
+pop__8AyuStackFv
+push__8AyuStackFi
+reset__8AyuStackFi
