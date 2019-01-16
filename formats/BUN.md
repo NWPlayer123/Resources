@@ -20,7 +20,8 @@ THIS IS USED IN PIKMIN 1 ONLY
 *8Val = 0x08 value
 *4Val = 0x04 value
 
-*File content indicators:
+#File content indicators:
+
 | Type | Number |
 | ---- | ------ |
 | PCR  | 0 |
