@@ -15,8 +15,24 @@ System::getTime(void) {
 	
 }
 
-Initialise__6SystemFv
-ParseMapFile__Fv
+// This is from a DLL found on 'any' pikmin disc
+// hardReset__6SystemFv
+StdSystem System::hardReset(StdSystem *this)
+{
+  StdSystem *v1; // ST60_4
+  struct Texture *v2; // eax
+  StdSystem *result; // eax
+
+  v1 = this;
+  *(this + 5) = j_allocateBytesOnHeap(0x10u);
+  v2 = StdSystem::loadTexture(v1, "consFont.bti", 1);
+  Font::setTexture(*(v1 + 5), v2, 16, 8);
+  StdSystem::set2DRoot(gsys, "screen/otona_blo/", "screen/otona_tex/");
+  result = v1;
+  *(v1 + 282) = 0;
+  return result;
+}
+
 __ct__6SystemFv
 __dt__6SystemFv
 __sinit_system_cpp
@@ -35,16 +51,17 @@ flush__9LogStreamFv
 freeBuffer__FUl
 getPending__10AramStreamFv
 getPending__9DVDStreamFv
-hardReset__6SystemFv
 initBigFont__Fv
 initSoftReset__6SystemFv
 init__9LoadIdlerFv
+initialise__6SystemFv
 invoke__29Delegate1<6System,R8Graphics>FR8Graphics
 loadFunc__FPv
 nudgeDvdThread__6SystemFv
 nudgeLoading__6SystemFv
 openFile__6SystemFPcbb
 parseArchiveDirectory__6SystemFPcPc
+parseMapFile__Fv
 read__10AramStreamFPvi
 read__9DVDStreamFPvi
 showDvdError__6SystemFR8Graphics
