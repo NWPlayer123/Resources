@@ -38,5 +38,5 @@ int main(int argc, const char **argv) {
 	uint64_t time = OSGetTime();
 	OSTicksToCalendarTime(time, (uint32_t*) calendarTime); //TODO: define this cuz stack
 	
-	//TODO: some math srand seed shit
+	//TODO: parse the commands in engine.ini
 }

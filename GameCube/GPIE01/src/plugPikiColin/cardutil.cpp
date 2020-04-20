@@ -1,0 +1,16 @@
+CardUtilCommand__FlllPvUlUl
+CardUtilErase__Fll
+CardUtilIdleWhileBusy__Fv
+CardUtilInit__FPvUll
+CardUtilIsCardBusy__Fv
+CardUtilMain__FPv
+CardUtilMount__FlPv
+CardUtilOpen__FllPv
+CardUtilResultCode__Fv
+CardUtilSave__FlP8CARDStatPv
+CardUtilUnmount__Fl
+CardUtilWrite__FllPvUlUl
+DoErase__Fll
+DoList__FlP14CardUtilDirent
+DoMount__FlPv
+DoSave__FlP8CARDStatPv

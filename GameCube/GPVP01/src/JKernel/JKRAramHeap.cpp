@@ -1,0 +1,8 @@
+__ct__11JKRAramHeapFUlUl
+__dt__11JKRAramHeapFv
+alloc__11JKRAramHeapFUlQ211JKRAramHeap10EAllocMode
+allocFromHead__11JKRAramHeapFUl
+allocFromTail__11JKRAramHeapFUl
+dump__11JKRAramHeapFv
+__sinit_JKRAramHeap_cpp
+__dt__23JSUList_12JKRAramBlock_Fv

@@ -1,0 +1,9 @@
+__ct__11PlugPikiAppFv
+__dt__11PlugPikiAppFv
+__dt__7GameAppFv
+draw__11PlugPikiAppFR8Graphics
+hardReset__11PlugPikiAppFv
+idle__11PlugPikiAppFv
+idle__7GameAppFv
+softReset__11PlugPikiAppFv
+update__11PlugPikiAppFv
