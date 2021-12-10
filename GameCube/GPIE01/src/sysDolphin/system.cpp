@@ -1,9 +1,3 @@
-openFile__6SystemFPcbb
-initSoftReset__6SystemFv
-beginRender__6SystemFv
-doneRender__6SystemFv
-waitRetrace__6SystemFv
-
 void System::run(BaseApp *app) { //r3 context, r4 BaseApp
 	GXInvalidateTexAll();
 	while (true) {
@@ -20,37 +14,60 @@ void System::run(BaseApp *app) { //r3 context, r4 BaseApp
 System::getTime(void) {
 	
 }
-updateSysClock__6SystemFv
-parseArchiveDirectory__6SystemFPcPc
-read__9DVDStreamFPvi
-getPending__9DVDStreamFv
-ParseMapFile__Fv
-hardReset__6SystemFv
+
+// This is from a DLL found on 'any' pikmin disc
+// hardReset__6SystemFv
+StdSystem System::hardReset(StdSystem *this)
+{
+  StdSystem *v1; // ST60_4
+  struct Texture *v2; // eax
+  StdSystem *result; // eax
+
+  v1 = this;
+  *(this + 5) = j_allocateBytesOnHeap(0x10u);
+  v2 = StdSystem::loadTexture(v1, "consFont.bti", 1);
+  Font::setTexture(*(v1 + 5), v2, 16, 8);
+  StdSystem::set2DRoot(gsys, "screen/otona_blo/", "screen/otona_tex/");
+  result = v1;
+  *(v1 + 282) = 0;
+  return result;
+}
+
 __ct__6SystemFv
-initBigFont__Fv
-showDvdError__6SystemFR8Graphics
-Initialise__6SystemFv
-sndPlaySe__6SystemFUl
 __dt__6SystemFv
-loadFunc__FPv
-draw__9LoadIdlerFR8Graphics
-init__9LoadIdlerFv
-startLoading__6SystemFP9LoadIdlerbUl
-nudgeLoading__6SystemFv
-endLoading__6SystemFv
-doneDMA__FUl
-copyWaitUntilDone__6SystemFv
-copyRamToCache__6SystemFUlUlUl
-copyCacheToRam__6SystemFUlUlUl
-freeBuffer__FUl
-copyCacheToTexture__6SystemFP12CacheTexture
-dvdFunc__FPv
-nudgeDvdThread__6SystemFv
-startDvdThread__6SystemFv
-flush__9LogStreamFv
-write__9LogStreamFPvi
-close__9DVDStreamFv
-invoke__29Delegate1<6System,R8Graphics>FR8Graphics
 __sinit_system_cpp
+beginRender__6SystemFv
+close__9DVDStreamFv
+copyCacheToRam__6SystemFUlUlUl
+copyCacheToTexture__6SystemFP12CacheTexture
+copyRamToCache__6SystemFUlUlUl
+copyWaitUntilDone__6SystemFv
+doneDMA__FUl
+doneRender__6SystemFv
+draw__9LoadIdlerFR8Graphics
+dvdFunc__FPv
+endLoading__6SystemFv
+flush__9LogStreamFv
+freeBuffer__FUl
 getPending__10AramStreamFv
+getPending__9DVDStreamFv
+initBigFont__Fv
+initSoftReset__6SystemFv
+init__9LoadIdlerFv
+initialise__6SystemFv
+invoke__29Delegate1<6System,R8Graphics>FR8Graphics
+loadFunc__FPv
+nudgeDvdThread__6SystemFv
+nudgeLoading__6SystemFv
+openFile__6SystemFPcbb
+parseArchiveDirectory__6SystemFPcPc
+parseMapFile__Fv
 read__10AramStreamFPvi
+read__9DVDStreamFPvi
+showDvdError__6SystemFR8Graphics
+sndPlaySe__6SystemFUl
+startDvdThread__6SystemFv
+startLoading__6SystemFP9LoadIdlerbUl
+updateSysClock__6SystemFv
+waitRetrace__6SystemFv
+write__9LogStreamFPvi
